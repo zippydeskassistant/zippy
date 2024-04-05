@@ -4,9 +4,9 @@
 
 #include <lvgl.h>
 
-#include "tabs.h"
+#include "ui/tabs/tabs.h"
 
-#include "ui.h"
+#include "ui/ui.h"
 
 extern lv_obj_t *tabview;
 

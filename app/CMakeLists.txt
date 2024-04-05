@@ -9,6 +9,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(app LANGUAGES C)
 
-add_subdirectory(src/usb)
-add_subdirectory(src/ui)
-add_subdirectory_ifdef(CONFIG_ZIPPY_GRUB_COMMANDER src/grub_commander)
+zephyr_include_directories(
+    include
+)
+
+add_subdirectory(src)

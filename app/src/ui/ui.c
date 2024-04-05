@@ -12,10 +12,10 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <lvgl_input_device.h>
-#include "zippy_theme.h"
-#include "ui.h"
+#include "ui/themes/zippy_theme.h"
+#include "ui/ui.h"
 
-#include "tabs.h"
+#include "ui/tabs/tabs.h"
 
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <zephyr/logging/log.h>
@@ -68,6 +68,7 @@ static lv_obj_t * create_topbar(lv_obj_t * parent, const char * title) {
 
 static lv_obj_t * create_tabview(lv_obj_t * parent) {
     lv_obj_t *tv = lv_tabview_create(parent, LV_DIR_TOP, 20);
+    lv_obj_clear_flag(lv_tabview_get_content(tv), LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_align(tv, LV_ALIGN_CENTER, 0, 0);
     return tv;
 }

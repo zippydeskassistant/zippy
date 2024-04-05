@@ -9,7 +9,7 @@
 #include <lvgl.h>
 #if CONFIG_ZIPPY_THEME_DEFAULT 
 
-#include "zippy_theme_default.h"
+#include "ui/themes/zippy_theme_default.h"
 #include <misc/lv_gc.h>
 
 /*********************

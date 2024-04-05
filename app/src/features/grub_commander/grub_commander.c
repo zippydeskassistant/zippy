@@ -5,7 +5,7 @@
 #include <zephyr/fs/fs.h>
 #include <ff.h>
 
-#include "grub_commander.h"
+#include "features/grub_commander/grub_commander.h"
 
 LOG_MODULE_REGISTER(grub_commander);
 

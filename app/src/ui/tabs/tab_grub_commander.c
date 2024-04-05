@@ -4,11 +4,11 @@
 
 #include <lvgl.h>
 
-#include "grub_commander.h"
+#include "features/grub_commander/grub_commander.h"
 
-#include "tabs.h"
+#include "ui/tabs/tabs.h"
 
-#include "ui.h"
+#include "ui/ui.h"
 
 extern lv_obj_t *tabview;
 LOG_MODULE_REGISTER(tab_grub_commander);
@@ -40,6 +40,7 @@ static void grub_commander_roller_event_cb(lv_event_t *e) {
 int grub_commander_tab_init(void) {
     LOG_INF("Initializing GRUB Commander tab");
     lv_obj_t *grub_commander_tab = lv_tabview_add_tab(tabview, LV_SYMBOL_LIST);
+    lv_obj_clear_flag(grub_commander_tab, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_size(grub_commander_tab, LV_PCT(100), LV_PCT(90));
 
     lv_obj_t *roller = lv_roller_create(grub_commander_tab);
@@ -49,7 +50,6 @@ int grub_commander_tab_init(void) {
                           "UEFI",
                           LV_ROLLER_MODE_NORMAL
     );
-
     lv_roller_set_visible_row_count(roller, 3);
     lv_roller_set_selected(roller, 1, LV_ANIM_OFF);
 

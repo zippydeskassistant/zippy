@@ -1,5 +1,3 @@
-zephyr_include_directories(.)
-
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb.c)
 
 # TODO: we should only icnlude keyboard and raw if they have a definition in the devicetree, individually.

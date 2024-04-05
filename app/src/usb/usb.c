@@ -2,7 +2,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/usbd.h>
-#include <stdio.h>
 
 LOG_MODULE_REGISTER(zippy_usb);
 
