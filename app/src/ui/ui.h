@@ -6,4 +6,6 @@
 /* Tab View, accessed by all tabs */
 extern lv_obj_t *tabview;
 
+extern lv_obj_t *topbar;
+
 #endif

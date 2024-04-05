@@ -11,3 +11,4 @@ project(app LANGUAGES C)
 
 add_subdirectory(src/usb)
 add_subdirectory(src/ui)
+add_subdirectory_ifdef(CONFIG_ZIPPY_GRUB_COMMANDER src/grub_commander)
