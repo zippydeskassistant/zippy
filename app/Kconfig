@@ -13,3 +13,151 @@ endmenu
 module = APP
 module-str = APP
 source "subsys/logging/Kconfig.template.log_config"
+
+menu "USB sample options"
+	depends on USB_DEVICE_STACK_NEXT
+
+config ZIPPY_USBD_MANUFACTURER
+	string "USB device sample manufacturer string"
+	default "Zephyr Project"
+	help
+	  USB device sample manufacturer string.
+
+config ZIPPY_USBD_PRODUCT
+	string "USB device sample product string"
+	default "USBD sample"
+	help
+	  USB device sample product stringa.
+
+config ZIPPY_USBD_PID
+	hex "USB device sample Product ID"
+	default 0x0001
+	help
+	  USB device sample Product ID.
+
+config ZIPPY_USBD_SELF_POWERED
+	bool "USB device sample Self-powered attribute"
+	default n
+	help
+	  Set the Self-powered attribute in the sample configuration.
+
+config ZIPPY_USBD_REMOTE_WAKEUP
+	bool "USB device sample Remote Wakeup attribute"
+	help
+	  Set the Remote Wakeup attribute in the sample configuration.
+
+config ZIPPY_USBD_MAX_POWER
+	int "USB device sample bMaxPower value"
+	default 125
+	range 0 250
+	help
+	  bMaxPower value in the sample configuration in 2 mA units.
+
+config ZIPPY_USBD_INIT_PRIORITY
+    int "USB device sample initialization priority"
+    default 90
+    help
+      USB device sample initialization priority.
+
+config ZIPPY_USBD_HID_KEYBOARD_INIT_PRIORITY
+	int "USB device sample HID keyboard initialization priority"
+	default 89
+	help
+	  USB device sample HID keyboard initialization priority.
+
+config ZIPPY_USBD_HID_RAW_INIT_PRIORITY
+	int "USB device sample HID raw initialization priority"
+	default 89
+	help
+	  USB device sample HID raw initialization priority.
+
+config ZIPPY_USBD_MSC_INIT_PRIORITY
+	int "USB device sample MSC initialization priority"
+	default 89
+	help
+	  USB device sample MSC initialization priority.
+
+endmenu
+
+menu "GRUB Commander"
+	depends on USB_DEVICE_STACK_NEXT
+
+config ZIPPY_GRUB_COMMANDER 
+	bool "Enable GRUB Commander"
+	imply FILE_SYSTEM
+	imply FAT_FILESYSTEM_ELM
+	imply FS_FATFS_LFN
+	imply USBD_MSC_CLASS
+	default n
+	help
+	  Enable GRUB Commander.
+
+endmenu
+
+menu "Audio Player"
+	depends on USB_DEVICE_STACK_NEXT
+
+config ZIPPY_AUDIO_PLAYER 
+	bool "Enable Audio Player"
+	imply USBD_HID_SUPPORT
+	default n
+	help
+	  Enable Audio Player.
+
+endmenu
+
+menu "Audio Controller"
+	depends on USB_DEVICE_STACK_NEXT
+
+config ZIPPY_AUDIO_CONTROLLER 
+	bool "Enable Audio Controller"
+	imply USBD_HID_SUPPORT
+	default n
+	help
+	  Enable Audio Controller.
+
+endmenu
+
+menu "Macros"
+	depends on USB_DEVICE_STACK_NEXT
+
+config ZIPPY_MACROS 
+	bool "Enable Macros"
+	imply USBD_HID_SUPPORT
+	default n
+	help
+	  Enable Macros.
+
+endmenu
+
+menu "User Interface"
+	depends on LVGL
+
+config ZIPPY_UI_INIT_PRIORITY
+	int "UI initialization priority"
+	default 91
+	help
+	  UI initialization priority.
+
+config ZIPPY_UI_TAB_INIT_PRIORITY
+	int "UI tab initialization priority"
+	default 92
+	help
+	  UI tab initialization priority.
+	
+choice 
+	prompt "Select theme"
+
+config ZIPPY_THEME_DEFAULT
+	bool "Default"
+	help
+	  Default theme.
+
+config ZIPPY_THEME_CUSTOM
+	bool "Custom"
+	help
+	  Custom theme.
+
+endchoice
+
+endmenu
