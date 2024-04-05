@@ -1,7 +1,0 @@
-"zippy":"/home/hlord/Documents/HelmutWork/zippy-workspace/zippy":"/home/hlord/Documents/HelmutWork/zippy-workspace/zippy"
-"cmsis":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/hal/cmsis":"${ZEPHYR_CMSIS_CMAKE_DIR}"
-"fatfs":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/fs/fatfs":"${ZEPHYR_FATFS_CMAKE_DIR}"
-"hal_nordic":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/hal/nordic":"${ZEPHYR_HAL_NORDIC_CMAKE_DIR}"
-"stm32":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/hal/stm32":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/hal/stm32"
-"lvgl":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/lib/gui/lvgl":"${ZEPHYR_LVGL_CMAKE_DIR}"
-"segger":"/home/hlord/Documents/HelmutWork/zippy-workspace/modules/debug/segger":"${ZEPHYR_SEGGER_CMAKE_DIR}"
