@@ -8,11 +8,13 @@ manifest:
   remotes:
     - name: zephyrproject-rtos
       url-base: https://github.com/zephyrproject-rtos
+    - name: zippy
+      url-base: https://github.com/zippydeskassistant
 
   projects:
     - name: zephyr
-      remote: zephyrproject-rtos
-      revision: v3.6-branch
+      remote: zippy 
+      revision: v3.6+zippy
       import:
         # By using name-allowlist we can clone only the modules that are
         # strictly needed by the application.
@@ -23,3 +25,4 @@ manifest:
           - lvgl
           - segger
           - fatfs
+          - littlefs

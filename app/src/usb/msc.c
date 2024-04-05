@@ -12,7 +12,7 @@ LOG_MODULE_REGISTER(zippy_msc);
 
 USBD_DEFINE_MSC_LUN(NAND, "Zephyr", "FlashDisk", "0.00");
 
-#define STORAGE_PARTITION		storage_partition
+#define STORAGE_PARTITION		msc_partition
 #define STORAGE_PARTITION_ID		FIXED_PARTITION_ID(STORAGE_PARTITION)
 
 static struct fs_mount_t fs_mnt;

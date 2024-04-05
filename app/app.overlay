@@ -12,9 +12,19 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		storage_partition: partition@0 {
+		storage_partition: storage_partition@0 {
 			label = "storage";
-			reg = <0x00000000 0x00020000>;
+			reg = <0x00000000 0x00010000>;
+		};
+
+		msc_partition: msc_partition@10000 {
+			label = "msc";
+			reg = <0x00010000 0x00030000>;
+		};
+
+		lfs_partition: lfs_partition@30000 {
+			label = "lfs";
+			reg = <0x00030000 0x4000000>;
 		};
 	};
 };
@@ -23,7 +33,7 @@
 	
 	msc_disk0 {
 		compatible = "zephyr,flash-disk";
-		partition = <&storage_partition>;
+		partition = <&msc_partition>;
 		disk-name = "NAND";
 		cache-size = <4096>;
 	};
