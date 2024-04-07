@@ -17,9 +17,9 @@
  *********************/
 #define COLOR_SCR     lv_color_make(0x1B, 0x1B, 0x2F)
 #define COLOR_WHITE   lv_color_make(0x1B, 0x1B, 0x2F)
-#define COLOR_LIGHT   lv_palette_lighten(LV_PALETTE_GREY, 2)
-#define COLOR_DARK    lv_palette_main(LV_PALETTE_GREY)
-#define COLOR_DIM     lv_palette_darken(LV_PALETTE_GREY, 2)
+#define COLOR_LIGHT   lv_palette_darken(LV_PALETTE_DEEP_PURPLE, 2)
+#define COLOR_DARK    lv_palette_main(LV_PALETTE_DEEP_PURPLE)
+#define COLOR_DIM     lv_palette_darken(LV_PALETTE_DEEP_PURPLE, 2)
 #define SCROLLBAR_WIDTH     2
 
 /**********************
@@ -74,8 +74,7 @@ static void style_init(void)
     style_init_reset(&styles->scr);
     lv_style_set_bg_opa(&styles->scr, LV_OPA_COVER);
     lv_style_set_bg_color(&styles->scr, COLOR_SCR);
-    lv_style_set_text_color(&styles->scr, COLOR_DIM);
-
+    lv_style_set_text_color(&styles->scr, lv_color_make(0xFF, 0xFF, 0xFF));
 
     style_init_reset(&styles->transp);
     lv_style_set_bg_opa(&styles->transp, LV_OPA_TRANSP);
