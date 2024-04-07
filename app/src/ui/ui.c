@@ -23,9 +23,9 @@ LOG_MODULE_REGISTER(app);
 
 /* Definitions for external use */
 lv_obj_t *tabview;
-lv_obj_t *topbar;
+lv_obj_t *time_label;
 
-static lv_obj_t *create_flex_container(lv_obj_t * parent, int per_x, int per_y, lv_flex_flow_t flow_direction, bool scrollable) {
+lv_obj_t *create_flex_container(lv_obj_t * parent, int per_x, int per_y, lv_flex_flow_t flow_direction, bool scrollable) {
     lv_obj_t * flex_container = lv_obj_create(parent);
 
     if (flex_container == NULL) {
@@ -54,7 +54,7 @@ static lv_obj_t * create_topbar(lv_obj_t * parent, const char * title) {
     lv_label_set_text(title_label, title);
     lv_obj_set_flex_grow(title_label, 5);
 
-    lv_obj_t * time_label = lv_label_create(topbar_container);
+    time_label = lv_label_create(topbar_container);
     lv_label_set_text(time_label, "HH:MM xm");
     lv_obj_set_flex_grow(time_label, 5);
     lv_obj_set_style_text_align(time_label, LV_TEXT_ALIGN_RIGHT, 0);
@@ -82,7 +82,7 @@ static int ui_init(void) {
 
     lv_obj_t *flex_container = create_flex_container(lv_scr_act(), 100, 100, LV_FLEX_FLOW_COLUMN, false);
 
-    topbar = create_topbar(flex_container, "NEKOMATA'97");
+    lv_obj_t *topbar = create_topbar(flex_container, "NEKOMATA'97");
 
     tabview = create_tabview(flex_container);
 
