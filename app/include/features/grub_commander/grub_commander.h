@@ -3,7 +3,13 @@
 
 #include <stdint.h>
 
-struct gc_index_message {
+#include "zippy/zippy_msg.h"
+
+struct gc_message {
+    enum msg_type type;
     uint16_t index;
 };
+
+int grub_get_boot_opt(uint16_t *index);
+
 #endif

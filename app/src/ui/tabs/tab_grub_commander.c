@@ -10,25 +10,21 @@
 
 #include "ui/ui.h"
 
-extern lv_obj_t *tabview;
 LOG_MODULE_REGISTER(tab_grub_commander);
 
-ZBUS_OBS_DECLARE(grub_commander_listener);
+extern lv_obj_t *tabview;
 
-ZBUS_CHAN_DEFINE(grub_commander_chan,
-                 struct gc_index_message,
-                 NULL,
-                 NULL,
-                 ZBUS_OBSERVERS(grub_commander_listener),
-                 ZBUS_MSG_INIT(0)
-);
+static lv_obj_t *roller;
+
+ZBUS_CHAN_DECLARE(grub_commander_chan);
 
 static void grub_commander_roller_event_cb(lv_event_t *e) {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *roller = lv_event_get_target(e);
 
     if (code == LV_EVENT_VALUE_CHANGED) {
-        struct gc_index_message selected_option;
+        struct gc_message selected_option;
+        selected_option.type = MSG_TYPE_UI;
         selected_option.index = lv_roller_get_selected(roller);
 
         zbus_chan_pub(&grub_commander_chan, &selected_option, K_NO_WAIT);
@@ -43,7 +39,7 @@ int grub_commander_tab_init(void) {
     lv_obj_clear_flag(grub_commander_tab, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_size(grub_commander_tab, LV_PCT(100), LV_PCT(90));
 
-    lv_obj_t *roller = lv_roller_create(grub_commander_tab);
+    roller = lv_roller_create(grub_commander_tab);
     lv_roller_set_options(roller,
                           "Ubuntu\n"
                           "Windows\n"
@@ -51,7 +47,10 @@ int grub_commander_tab_init(void) {
                           LV_ROLLER_MODE_NORMAL
     );
     lv_roller_set_visible_row_count(roller, 3);
-    lv_roller_set_selected(roller, 1, LV_ANIM_OFF);
+
+    uint16_t index;
+    grub_get_boot_opt(&index);
+    lv_roller_set_selected(roller, index, LV_ANIM_OFF);
 
     lv_obj_set_size(roller, LV_PCT(100), LV_PCT(100));
 
@@ -59,3 +58,18 @@ int grub_commander_tab_init(void) {
 
     return 0;
 }
+
+
+static void zbus_cb_grub_commander_tab(const struct zbus_channel *chan) {
+    const struct gc_message *selected_option = zbus_chan_const_msg(chan);
+
+    if (selected_option->type == MSG_TYPE_FEATURE) {
+        uint16_t index = selected_option->index;
+        if (roller != NULL) {
+            lv_roller_set_selected(roller, index, LV_ANIM_OFF);
+        }
+        LOG_INF("FEATURE: Selected option: %d", selected_option->index);
+    }
+}
+
+ZBUS_LISTENER_DEFINE(grub_commander_tab, zbus_cb_grub_commander_tab);
