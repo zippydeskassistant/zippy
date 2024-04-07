@@ -4,6 +4,9 @@
 #include <zephyr/usb/usbd.h>
 #include <zephyr/usb/class/usbd_hid.h>
 #include <zephyr/net/buf.h>
+#include <zephyr/zbus/zbus.h>
+
+#include "usb/raw_hid.h"
 
 LOG_MODULE_REGISTER(zippy_raw_hid);
 
@@ -122,3 +125,88 @@ static int hid_init_raw(void) {
 }
 
 SYS_INIT(hid_init_raw, APPLICATION, CONFIG_ZIPPY_USBD_HID_RAW_INIT_PRIORITY);
+
+int raw_hid_send_packet(struct raw_hid_packet *packet) {
+	int err;
+
+	uint8_t buffer[32];
+	buffer[0] = packet->report_id;
+	buffer[1] = packet->seq_id & 0xFF;
+	buffer[2] = (packet->seq_id >> 8) & 0xFF;
+	memcpy(&buffer[RAW_HID_HEADER_SIZE], packet->data, packet->data_len);
+
+	const struct device *raw_dev;
+	raw_dev = DEVICE_DT_GET(DT_NODELABEL(hid_raw));
+	err = hid_device_submit_report(raw_dev,
+								   RAW_HID_HEADER_SIZE + packet->data_len,
+								   buffer,
+								   true
+	);
+	if (err) {
+		LOG_ERR("Failed to submit raw HID report: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static int parse_raw_hid_packet(struct net_buf *nb) {
+
+	int err;
+
+    uint8_t buffer[32];
+
+    size_t packet_length = net_buf_frags_len(nb);
+    memcpy(&buffer, net_buf_pull_mem(nb, packet_length), packet_length);
+
+    struct raw_hid_packet packet = {0};
+    packet.report_id = buffer[0];
+    packet.seq_id = buffer[2] << 8 | buffer[1];
+    packet.data_len = packet_length - RAW_HID_HEADER_SIZE;
+    memcpy(packet.data, &buffer[RAW_HID_HEADER_SIZE], packet.data_len);
+
+    switch(packet.report_id) {
+        case REPORT_ID_TIME:
+			err = time_set(&packet);
+        case REPORT_ID_AUDIO_TITLE:
+        case REPORT_ID_AUDIO_ARTIST:
+        case REPORT_ID_AUDIO_ALBUM:
+        case REPORT_ID_AUDIO_TIME:
+        case REPORT_ID_AUDIO_PROCESS:
+        case REPORT_ID_MACRO:
+        case REPORT_ID_SET_IMAGE_PATH:
+        case REPORT_ID_GET_IMAGE_PATH:
+        case REPORT_ID_IMAGE_DATA:
+        case REPORT_ID_IMAGE_CRC_REQUEST:
+        case REPORT_ID_IMAGE_CONFIRM:
+            LOG_INF("Received raw HID packet with report ID %d and seq ID %d", packet.report_id, packet.seq_id);
+            break;
+        default:
+            LOG_ERR("Received raw HID packet with unknown report ID %d", packet.report_id);
+            return -EINVAL;
+    }
+
+	if (err) {
+		LOG_ERR("Failed to process raw HID packet: %d", err);
+	}
+
+    return 0;
+}
+
+static void raw_hid_thread(void *p1, void *p2, void *p3) {
+    int err;
+
+	while (1) {
+		struct net_buf *nb = net_buf_get(&raw_hid_fifo, K_FOREVER);
+
+        err = parse_raw_hid_packet(nb);
+        if (err) {
+            LOG_ERR("Failed to parse raw HID packet: %d", err);
+        }
+
+		net_buf_reset(nb);
+		net_buf_unref(nb);
+	}
+}
+
+K_THREAD_DEFINE(raw_hid_thread_id, 1024, raw_hid_thread, NULL, NULL, NULL, 5, 0, 0);

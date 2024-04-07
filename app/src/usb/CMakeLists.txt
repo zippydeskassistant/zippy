@@ -4,6 +4,5 @@ target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb.c)
 target_sources_ifdef(CONFIG_DT_HAS_ZEPHYR_HID_DEVICE_ENABLED app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/keyboard.c)
 target_sources_ifdef(CONFIG_DT_HAS_ZEPHYR_HID_DEVICE_ENABLED app PRIVATE 
                      ${CMAKE_CURRENT_SOURCE_DIR}/raw_hid.c
-                     ${CMAKE_CURRENT_SOURCE_DIR}/raw_hid_parse.c
 )
 target_sources_ifdef(CONFIG_ZIPPY_GRUB_COMMANDER app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msc.c)
