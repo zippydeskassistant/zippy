@@ -11,6 +11,7 @@ project(app LANGUAGES C)
 
 zephyr_include_directories(
     include
+    # Disgusting hack
     ../../modules/fs/littlefs
 )
 
