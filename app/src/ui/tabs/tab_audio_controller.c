@@ -22,15 +22,27 @@ void zbus_cb_tab_audio_controller(const struct zbus_channel *chan) {}
 
 ZBUS_LISTENER_DEFINE(audio_controller_listener, zbus_cb_tab_audio_controller);
 
-static void audio_controller_roller_event_cb(lv_event_t *e) {
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *roller = lv_event_get_target(e);
+static void volume_slider_cb(lv_event_t *e) {
+    lv_obj_t *slider = lv_event_get_target(e);
 
-    if (code == LV_EVENT_VALUE_CHANGED) {
-        char selected_option[16];
-        lv_roller_get_selected_str(roller, selected_option, sizeof(selected_option));
-        LOG_INF("Selected option: %s", selected_option);
-    }
+    uint32_t value = lv_slider_get_value(slider);
+    LOG_INF("Main Volume Changed: %d", value); 
+}
+
+static lv_obj_t * create_slider_with_label(lv_obj_t * parent, char * label_text) {
+    lv_obj_t *slider_container = create_flex_container(parent, 100, 20, LV_FLEX_FLOW_COLUMN, false);
+
+    lv_obj_t *label = lv_label_create(slider_container);
+    lv_obj_set_size(label, LV_PCT(100), LV_PCT(50));
+    lv_label_set_text(label, label_text);
+
+    lv_obj_t *slider = lv_slider_create(slider_container);
+    lv_obj_set_size(slider, LV_PCT(100), LV_PCT(50));
+    lv_slider_set_value(slider, 50, LV_ANIM_OFF);
+
+    lv_obj_add_event_cb(slider, volume_slider_cb, LV_EVENT_RELEASED, label_text);
+
+    return slider_container;
 }
 
 int audio_controller_tab_init(void) {
@@ -38,20 +50,10 @@ int audio_controller_tab_init(void) {
     lv_obj_t *audio_controller_tab = lv_tabview_add_tab(tabview, LV_SYMBOL_VOLUME_MAX);
     lv_obj_set_size(audio_controller_tab, LV_PCT(100), LV_PCT(90));
 
-    lv_obj_t *roller = lv_roller_create(audio_controller_tab);
-    lv_roller_set_options(roller,
-                          "Foo\n"
-                          "Bar\n"
-                          "Baz",
-                          LV_ROLLER_MODE_NORMAL
-    );
+    lv_obj_t *audio_controller_flex = create_flex_container(audio_controller_tab, 100, 100, LV_FLEX_FLOW_COLUMN, false);
 
-    lv_roller_set_visible_row_count(roller, 3);
-    lv_roller_set_selected(roller, 1, LV_ANIM_OFF);
-
-    lv_obj_set_size(roller, LV_PCT(100), LV_PCT(100));
-
-    lv_obj_add_event_cb(roller, audio_controller_roller_event_cb, LV_EVENT_ALL, NULL);
+    char *main_slider_title = "System";
+    lv_obj_t *main_volume_slider = create_slider_with_label(audio_controller_flex, main_slider_title);
 
     return 0;
 }
