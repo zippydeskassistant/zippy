@@ -61,7 +61,6 @@
 	};
 };
 
-/*
 &pinctrl {
 	pwm0_default: pwm0_default {
 		group1 {
@@ -79,10 +78,9 @@
 
 &pwm_led0 {
 	pwm_led0 {
-		pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 	};
 };
-*/
 
 &ft5336_adafruit_2_8_tft_touch_v2 {
 	/* Uncomment if IRQ line is available (requires to solder jumper) */
