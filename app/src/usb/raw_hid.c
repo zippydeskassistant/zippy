@@ -169,6 +169,7 @@ static int parse_raw_hid_packet(struct net_buf *nb) {
         case REPORT_ID_TIME:
 			err = time_set(&packet);
         case REPORT_ID_AUDIO_TITLE:
+			err = song_set(&packet);
         case REPORT_ID_AUDIO_ARTIST:
         case REPORT_ID_AUDIO_ALBUM:
         case REPORT_ID_AUDIO_TIME:

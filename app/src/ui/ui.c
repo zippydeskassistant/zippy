@@ -24,6 +24,7 @@ LOG_MODULE_REGISTER(app);
 /* Definitions for external use */
 lv_obj_t *tabview;
 lv_obj_t *time_label;
+lv_obj_t *song_label;
 
 lv_obj_t *create_flex_container(lv_obj_t * parent, int per_x, int per_y, lv_flex_flow_t flow_direction, bool scrollable) {
     lv_obj_t * flex_container = lv_obj_create(parent);
@@ -50,9 +51,9 @@ lv_obj_t *create_flex_container(lv_obj_t * parent, int per_x, int per_y, lv_flex
 static lv_obj_t * create_topbar(lv_obj_t * parent, const char * title) {
     lv_obj_t * topbar_container = create_flex_container(parent, 95, 10, LV_FLEX_FLOW_ROW, false);
 
-    lv_obj_t * title_label = lv_label_create(topbar_container);
-    lv_label_set_text(title_label, title);
-    lv_obj_set_flex_grow(title_label, 5);
+    song_label = lv_label_create(topbar_container);
+    lv_label_set_text(song_label, title);
+    lv_obj_set_flex_grow(song_label, 5);
 
     time_label = lv_label_create(topbar_container);
     lv_label_set_text(time_label, "HH:MM xm");
