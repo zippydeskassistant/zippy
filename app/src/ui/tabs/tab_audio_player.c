@@ -20,6 +20,8 @@ K_WORK_DEFINE(work_tab_audio_player, update_tab_audio_player);
 
 void zbus_cb_tab_audio_player(const struct zbus_channel *chan) {}
 
+extern struct k_mutex ui_mutex;
+
 ZBUS_LISTENER_DEFINE(audio_player_listener, zbus_cb_tab_audio_player);
 
 static void audio_player_roller_event_cb(lv_event_t *e) {
@@ -28,7 +30,9 @@ static void audio_player_roller_event_cb(lv_event_t *e) {
 
     if (code == LV_EVENT_VALUE_CHANGED) {
         char selected_option[16];
+        k_mutex_lock(&ui_mutex, K_FOREVER);
         lv_roller_get_selected_str(roller, selected_option, sizeof(selected_option));
+        k_mutex_unlock(&ui_mutex);
         LOG_INF("Selected option: %s", selected_option);
     }
 }

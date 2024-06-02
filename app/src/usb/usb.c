@@ -14,7 +14,7 @@ USBD_DEVICE_DEFINE(zippy_usbd,
 USBD_DESC_LANG_DEFINE(zippy_lang);
 USBD_DESC_MANUFACTURER_DEFINE(zippy_mfr, CONFIG_ZIPPY_USBD_MANUFACTURER);
 USBD_DESC_PRODUCT_DEFINE(zippy_product, CONFIG_ZIPPY_USBD_PRODUCT);
-USBD_DESC_SERIAL_NUMBER_DEFINE(zippy_sn, "CAFE");
+USBD_DESC_SERIAL_NUMBER_DEFINE(zippy_sn);
 
 static const uint8_t attributes = (IS_ENABLED(CONFIG_ZIPPY_USBD_SELF_POWERED) ?
 				   USB_SCD_SELF_POWERED : 0) |
@@ -53,23 +53,25 @@ int usbd_init_device(void)
 		return err;
 	}
 
-	err = usbd_add_configuration(&zippy_usbd, &zippy_config);
+	err = usbd_add_configuration(&zippy_usbd, USBD_SPEED_HS, &zippy_config);
 	if (err) {
 		LOG_ERR("Failed to add configuration (%d)", err);
 		return err;
 	}
 
-	STRUCT_SECTION_FOREACH(usbd_class_node, node) {
-		err = usbd_register_class(&zippy_usbd, node->name, 1);
+	STRUCT_SECTION_FOREACH_ALTERNATE(usbd_class_fs, usbd_class_node, c_nd) {
+		/* Pull everything that is enabled in our configuration. */
+		err = usbd_register_class(&zippy_usbd, c_nd->c_data->name,
+					  USBD_SPEED_FS, 1);
 		if (err) {
-			LOG_ERR("Failed to register %s (%d)", node->name, err);
+			LOG_ERR("Failed to register %s (%d)", c_nd->c_data->name, err);
 			return err;
 		}
 
-		LOG_DBG("Register %s", node->name);
+		LOG_DBG("Register %s", c_nd->c_data->name);
 	}
 
-	err = usbd_device_set_code_triple(&zippy_usbd, 0, 0, 0);
+	err = usbd_device_set_code_triple(&zippy_usbd, USBD_SPEED_FS, 0, 0, 0);
 	if (err) {
 		LOG_ERR("Failed to set code triple (%d)", err);
 		return err;

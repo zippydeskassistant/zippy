@@ -6,6 +6,9 @@
 #include <zephyr/net/buf.h>
 #include <zephyr/zbus/zbus.h>
 
+#include "ui/topbar/topbar_song.h"
+#include "ui/topbar/topbar_time.h"
+
 #include "usb/raw_hid.h"
 
 LOG_MODULE_REGISTER(zippy_raw_hid);
@@ -14,8 +17,8 @@ LOG_MODULE_REGISTER(zippy_raw_hid);
 #define HID_USAGE_GEN_ZIPPY_PAGE 0x69
 
 static const uint8_t __aligned(32) raw_report_desc[] = {
-	HID_USAGE_PAGE(HID_USAGE_GEN_DESKTOP),			
-	HID_USAGE(HID_USAGE_GEN_DESKTOP_UNDEFINED),	
+	HID_USAGE_PAGE(HID_USAGE_GEN_ZIPPY),			
+	HID_USAGE(HID_USAGE_GEN_ZIPPY_PAGE),	
 	HID_COLLECTION(HID_COLLECTION_APPLICATION),	
 		HID_USAGE_PAGE(0x6A),
 		HID_USAGE_MIN8(0x00),
@@ -139,8 +142,7 @@ int raw_hid_send_packet(struct raw_hid_packet *packet) {
 	raw_dev = DEVICE_DT_GET(DT_NODELABEL(hid_raw));
 	err = hid_device_submit_report(raw_dev,
 								   RAW_HID_HEADER_SIZE + packet->data_len,
-								   buffer,
-								   true
+								   buffer
 	);
 	if (err) {
 		LOG_ERR("Failed to submit raw HID report: %d", err);
@@ -152,7 +154,7 @@ int raw_hid_send_packet(struct raw_hid_packet *packet) {
 
 static int parse_raw_hid_packet(struct net_buf *nb) {
 
-	int err;
+	int err = 0;
 
     uint8_t buffer[32];
 
@@ -167,9 +169,11 @@ static int parse_raw_hid_packet(struct net_buf *nb) {
 
     switch(packet.report_id) {
         case REPORT_ID_TIME:
-			err = time_set(&packet);
+			err = topbar_time_set(&packet);
+			break;
         case REPORT_ID_AUDIO_TITLE:
-			err = song_set(&packet);
+			err = topbar_song_set(&packet);
+			break;
         case REPORT_ID_AUDIO_ARTIST:
         case REPORT_ID_AUDIO_ALBUM:
         case REPORT_ID_AUDIO_TIME:
@@ -205,9 +209,8 @@ static void raw_hid_thread(void *p1, void *p2, void *p3) {
             LOG_ERR("Failed to parse raw HID packet: %d", err);
         }
 
-		net_buf_reset(nb);
 		net_buf_unref(nb);
 	}
 }
 
-K_THREAD_DEFINE(raw_hid_thread_id, 1024, raw_hid_thread, NULL, NULL, NULL, 5, 0, 0);
+K_THREAD_DEFINE(raw_hid_thread_id, 2048, raw_hid_thread, NULL, NULL, NULL, 5, 0, 0);

@@ -16,6 +16,8 @@ extern lv_obj_t *tabview;
 
 static lv_obj_t *roller;
 
+extern struct k_mutex ui_mutex;
+
 ZBUS_CHAN_DECLARE(grub_commander_chan);
 
 static void grub_commander_roller_event_cb(lv_event_t *e) {
@@ -25,7 +27,9 @@ static void grub_commander_roller_event_cb(lv_event_t *e) {
     if (code == LV_EVENT_VALUE_CHANGED) {
         struct gc_message selected_option;
         selected_option.type = MSG_TYPE_UI;
+        k_mutex_lock(&ui_mutex, K_FOREVER);
         selected_option.index = lv_roller_get_selected(roller);
+        k_mutex_unlock(&ui_mutex);
 
         zbus_chan_pub(&grub_commander_chan, &selected_option, K_NO_WAIT);
 
@@ -66,7 +70,9 @@ static void zbus_cb_grub_commander_tab(const struct zbus_channel *chan) {
     if (selected_option->type == MSG_TYPE_FEATURE) {
         uint16_t index = selected_option->index;
         if (roller != NULL) {
+            k_mutex_lock(&ui_mutex, K_FOREVER);
             lv_roller_set_selected(roller, index, LV_ANIM_OFF);
+            k_mutex_unlock(&ui_mutex);
         }
         LOG_INF("FEATURE: Selected option: %d", selected_option->index);
     }

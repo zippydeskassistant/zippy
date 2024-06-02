@@ -74,6 +74,8 @@ static lv_obj_t * create_tabview(lv_obj_t * parent) {
     return tv;
 }
 
+K_MUTEX_DEFINE(ui_mutex);
+
 static int ui_init(void) {
     lv_disp_t *disp = lv_disp_get_default();
 
@@ -128,7 +130,9 @@ int ui_thread(void)
     }
 
 	while (1) {
+        k_mutex_lock(&ui_mutex, K_FOREVER);
 		lv_task_handler();
+        k_mutex_unlock(&ui_mutex);
 		k_msleep(10);
 	}
 }

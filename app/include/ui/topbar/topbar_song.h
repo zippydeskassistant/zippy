@@ -1,8 +1,8 @@
-#ifndef TOPBAR_TIME_H__
-#define TOPBAR_TIME_H__
+#ifndef TOPBAR_SONG_H__
+#define TOPBAR_SONG_H__
 
 #include "usb/raw_hid.h"
 
-int song_set(struct raw_hid_packet *packet);
+int topbar_song_set(struct raw_hid_packet *packet);
 
 #endif
